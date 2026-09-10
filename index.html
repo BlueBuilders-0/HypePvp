@@ -105,6 +105,13 @@
   .preset-btn:hover{filter:brightness(1.3);}
 
   #hud{position:fixed;inset:0;pointer-events:none;z-index:20;}
+  #leaveBtn{position:absolute;top:14px;left:14px;z-index:30;pointer-events:auto;
+    padding:8px 16px;background:linear-gradient(180deg,rgba(180,60,60,.9),rgba(120,30,30,.9));
+    border:2px solid #ff8080;color:#fff;font-weight:900;font-size:12px;
+    letter-spacing:2px;border-radius:5px;cursor:pointer;font-family:inherit;
+    box-shadow:0 4px 15px rgba(0,0,0,.6);}
+  #leaveBtn:hover{filter:brightness(1.2);}
+  #leaveBtn:active{transform:translateY(1px);}
   #crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
     width:22px;height:22px;pointer-events:none;}
   #crosshair::before,#crosshair::after{content:"";position:absolute;background:#fff;
@@ -218,7 +225,6 @@
   #dmgFlash{position:absolute;inset:0;background:radial-gradient(ellipse at center,
     transparent 40%, rgba(255,0,0,.45) 100%);pointer-events:none;opacity:0;transition:opacity .3s;}
 
-  /* Mobile controls */
   #mobileControls{position:fixed;inset:0;z-index:25;pointer-events:none;}
   #joystick{position:absolute;left:16px;bottom:100px;width:150px;height:150px;
     border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.06),rgba(0,0,0,.35));
@@ -246,6 +252,10 @@
   .mbtn.sprint{background:linear-gradient(180deg,rgba(90,110,140,.9),rgba(50,60,80,.9));}
   .mbtn.sprint.sprint-on{background:linear-gradient(180deg,#5fd05f,#2a8a2a);
     border-color:#c6ffb8;box-shadow:0 0 20px rgba(120,255,120,.6);}
+  .mbtn.fly{background:linear-gradient(180deg,rgba(90,180,220,.9),rgba(30,90,140,.9));
+    border-color:rgba(150,220,255,.5);}
+  .mbtn.fly.fly-on{background:linear-gradient(180deg,#5ac8e0,#2a6a8a);
+    border-color:#c6f0ff;box-shadow:0 0 20px rgba(120,200,255,.7);}
 
   #mobileChatBar{position:fixed;left:8px;right:8px;bottom:8px;z-index:45;
     display:flex;gap:6px;background:rgba(0,0,0,.9);padding:8px;border-radius:6px;
@@ -256,7 +266,6 @@
     color:#fff;font-weight:900;border:1px solid #163a16;border-radius:4px;
     font-family:inherit;font-size:14px;letter-spacing:1px;cursor:pointer;}
 
-  /* Vote overlay */
   #voteOverlay{position:fixed;inset:0;z-index:48;background:rgba(0,0,0,.85);
     display:flex;align-items:center;justify-content:center;padding:16px;}
   .vote-panel{background:linear-gradient(180deg,rgba(20,24,38,.98),rgba(12,15,26,.98));
@@ -300,6 +309,7 @@
 <div id="nametags"></div>
 
 <div id="hud" class="hidden">
+  <button id="leaveBtn">LEAVE</button>
   <div id="deadOverlay" class="hidden"></div>
   <div id="deadMsg" class="hidden">YOU DIED</div>
   <div id="dmgFlash"></div>
@@ -332,6 +342,7 @@
   <div id="mobileTopBtns">
     <button class="mbtn chat" id="mChat">CHAT</button>
     <button class="mbtn sprint" id="mSprint">RUN</button>
+    <button class="mbtn fly hidden" id="mFly">FLY</button>
   </div>
 </div>
 
@@ -365,7 +376,7 @@
     <button class="btn blue" onclick="showPane('pane-settings')">SETTINGS</button>
     <button class="btn gray" onclick="showPane('pane-help')">HOW TO PLAY</button>
     <div style="text-align:center;color:#4a5878;font-size:10px;
-      letter-spacing:2px;margin-top:20px;">VERSION 7.0 &middot; PEERJS MULTIPLAYER</div>
+      letter-spacing:2px;margin-top:20px;">VERSION 8.0 &middot; PEERJS MULTIPLAYER</div>
   </div>
 
   <div class="panel hidden" id="pane-custom">
@@ -466,27 +477,24 @@
       Look: Click world &middot; Release: Esc<br>
       Attack/Break: Left Click &middot; Place/Use: Right Click<br>
       Hotbar: 1-9 or Mouse Wheel &middot; Chat: T &middot; Players: Tab<br>
-      Fly (BuildHub): F<br><br>
+      Fly (BuildHub): F &middot; Leave: LEAVE button (top-left)<br><br>
 
       <b style="color:#8fd88f;">MOBILE</b><br>
-      Joystick (bottom-left) to move<br>
-      Drag right side to look<br>
-      <b>Tap</b> screen to place a block<br>
+      Joystick to move &middot; Drag right side to look<br>
+      <b>Tap</b> screen to place or open a door<br>
       <b>Hold</b> screen for ~0.25s to break blocks<br>
-      JUMP button, RUN toggle, CHAT button<br><br>
+      JUMP button, RUN toggle, CHAT button, FLY (Creative only)<br>
+      While flying: JUMP = rise, RUN = descend<br>
+      Leave: LEAVE button (top-left)<br><br>
 
-      <b style="color:#8fd88f;">TNT RUN</b><br>
-      Blocks crumble when stepped on. Fall in the void and you're out.<br><br>
+      <b style="color:#8fd88f;">DOORS</b><br>
+      Right-click (or tap) a door to swing it open. Open doors are passable.
+      Right-click again to close.<br><br>
 
-      <b style="color:#8fd88f;">SKYWARS</b><br>
-      Chests on your island, middle loot, void death. Map blocks cannot be broken.<br><br>
-
-      <b style="color:#8fd88f;">CREATIVE BUILD</b><br>
-      Flat plot. Press F to fly. You can place and break blocks while flying.<br><br>
-
-      <b style="color:#8fd88f;">BUILD BATTLE (2-5 players)</b><br>
-      Everyone gets a plot and the same random theme. Build for 5 minutes,
-      then vote for the best build. Most votes wins!
+      <b style="color:#8fd88f;">TNT RUN</b> &mdash; floor crumbles, last one standing wins.<br>
+      <b style="color:#8fd88f;">SKYWARS</b> &mdash; chests, middle loot, void death. Map blocks can't be broken.<br>
+      <b style="color:#8fd88f;">CREATIVE BUILD</b> &mdash; flat plot, 9 block types, fly with F.<br>
+      <b style="color:#8fd88f;">BUILD BATTLE</b> &mdash; 2-5 players, same random theme, 5 min, then vote.
     </div>
     <button class="btn gray" style="margin-top:16px;" onclick="showPane('pane-main')">BACK</button>
   </div>
@@ -498,9 +506,13 @@
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script>
 /* =================================================================
-   HypePvp v7.0 — BlueBuilders Team
-   - Tap to place / hold to break on mobile
-   - Hand shown on mobile
+   HypePvp v8.0 — BlueBuilders Team
+   - Fading system messages (3s)
+   - Faster movement
+   - Door block (open/close on right-click/tap)
+   - 9 block types in Creative
+   - LEAVE + FLY buttons
+   - Mobile: tap=place/open, hold=break, hand visible
    - Username input
    - Creative fly + place fix
    - Creative death respawn fix
@@ -602,6 +614,7 @@ const Sound = {
   defeat(){ [400,350,300,200].forEach((n,i)=>setTimeout(()=>this._tone(n,0.35,'sawtooth',0.2),i*180)); },
   deny(){ this._tone(200, 0.08, 'square', 0.18); this._tone(140, 0.12, 'square', 0.15); },
   vote(){ this._tone(660, 0.1, 'sine', 0.15); setTimeout(()=>this._tone(990, 0.12, 'sine', 0.15), 80); },
+  door(){ this._noise(0.12, 900, 0.12); this._tone(180, 0.09, 'square', 0.08, 0.003, 120); },
 };
 
 /* ========== ITEMS ========== */
@@ -619,6 +632,15 @@ const ITEMS = {
   tnt:{name:'TNT',kind:'block',block:'tnt',color:'#e04b2a'},
   stone:{name:'Stone',kind:'block',block:'stone',color:'#8f8f8f'},
   leaves:{name:'Leaves',kind:'block',block:'leaves',color:'#3f8f34'},
+  door:{name:'Door',kind:'block',block:'door',color:'#8a5a34'},
+  cobble:{name:'Cobblestone',kind:'block',block:'cobble',color:'#767676'},
+  sand:{name:'Sand',kind:'block',block:'sand',color:'#e0d29a'},
+  log:{name:'Oak Log',kind:'block',block:'log',color:'#5a3a1c'},
+  yellow:{name:'Yellow Wool',kind:'block',block:'yellow',color:'#e0c64a'},
+  blue:{name:'Blue Wool',kind:'block',block:'blue',color:'#3a5ad4'},
+  green:{name:'Green Wool',kind:'block',block:'green',color:'#4ad46a'},
+  purple:{name:'Purple Wool',kind:'block',block:'purple',color:'#9a4ad4'},
+  dirt:{name:'Dirt',kind:'block',block:'dirt',color:'#8a5a34'},
 };
 
 function drawItemIcon(ctx, itemId, size){
@@ -806,6 +828,32 @@ function genChestTop(seed){
   x.fillStyle='#c8a848';x.fillRect(6,6,4,4);
   return c;
 }
+function genDoorClosed(seed){
+  const {c,x} = mkCanvas(16);
+  fillNoise(x, '#8a5a34', {vary:0.1, seed});
+  x.fillStyle = '#5a3418';
+  x.fillRect(0,0,16,1); x.fillRect(0,15,16,1);
+  x.fillRect(0,0,1,16); x.fillRect(15,0,1,16);
+  x.fillStyle = '#6b4224';
+  x.fillRect(2,2,12,6); x.fillRect(2,9,12,5);
+  x.fillStyle = '#4a2a10';
+  x.fillRect(3,3,10,4); x.fillRect(3,10,10,3);
+  x.fillStyle = '#e0c060'; x.fillRect(11,8,2,2);
+  x.fillStyle = '#a08020'; x.fillRect(11,8,2,1);
+  return c;
+}
+function genDoorOpen(seed){
+  const {c,x} = mkCanvas(16);
+  x.clearRect(0,0,16,16);
+  x.fillStyle = '#5a3418'; x.fillRect(0,0,2,16);
+  x.fillStyle = '#8a5a34'; x.fillRect(1,0,1,16);
+  x.fillStyle = 'rgba(138,90,52,0.35)';
+  x.fillRect(3,1,11,14);
+  x.fillStyle = 'rgba(90,52,24,0.55)';
+  x.fillRect(3,1,11,1); x.fillRect(3,14,11,1);
+  x.fillRect(3,1,1,14); x.fillRect(13,1,1,14);
+  return c;
+}
 function genHeadFront(skinColor, seed){
   const {c, x} = mkCanvas(16);
   fillNoise(x, skinColor, { vary: 0.08, seed });
@@ -852,23 +900,26 @@ function buildAllTextures(){
   TEX.endstone = { side: genEndstone(241), top: genEndstone(241), bottom: genEndstone(241) };
   TEX.barrier = { side: genBarrier(231), top: genBarrier(231), bottom: genBarrier(231), transparent: true };
   TEX.chest = { side: genChestSide(251), top: genChestTop(252), bottom: genPlanks(141) };
+  TEX.door = { side: genDoorClosed(301), top: genPlanks(141), bottom: genPlanks(141) };
+  TEX.door_open = { side: genDoorOpen(302), top: genPlanks(141), bottom: genPlanks(141), transparent:true };
 }
 
 const BLOCK_TYPES = ['grass','dirt','stone','cobble','planks','log','leaves','sand','glass',
-                     'red','blue','green','yellow','purple','tnt','obsidian','endstone','barrier','chest'];
+                     'red','blue','green','yellow','purple','tnt','obsidian','endstone','barrier','chest',
+                     'door','door_open'];
 
 const BLOCK_HEX = {
   grass:0x6fbf44,dirt:0x8a5a34,stone:0x8f8f8f,cobble:0x767676,planks:0xb8843e,
   log:0x5a3a1c,leaves:0x3f8f34,sand:0xe0d29a,glass:0xbfe6ff,red:0xd43a3a,
   blue:0x3a5ad4,green:0x4ad46a,yellow:0xe0c64a,purple:0x9a4ad4,tnt:0xe04b2a,
-  obsidian:0x2a1a3a,endstone:0xe8e0a0,chest:0x7a4a1a,
+  obsidian:0x2a1a3a,endstone:0xe8e0a0,chest:0x7a4a1a,door:0x8a5a34,door_open:0x8a5a34,
 };
 
 function blockMaterial(t){
   if (!t) return 'stone';
   if (t === 'grass' || t === 'dirt' || t === 'sand') return 'dirt';
   if (t === 'leaves') return 'grass';
-  if (t === 'planks' || t === 'log' || t === 'chest') return 'wood';
+  if (t === 'planks' || t === 'log' || t === 'chest' || t === 'door' || t === 'door_open') return 'wood';
   if (t === 'glass') return 'glass';
   if (t === 'red' || t === 'blue' || t === 'green' || t === 'yellow' || t === 'purple') return 'wool';
   if (t === 'tnt') return 'tnt';
@@ -908,7 +959,12 @@ class VoxelWorld {
   }
   static key(x,y,z){ return x+'|'+y+'|'+z; }
   get(x,y,z){ return this.map.get(VoxelWorld.key(x,y,z)); }
-  isSolid(x,y,z){ return this.map.has(VoxelWorld.key(x,y,z)); }
+  isSolid(x,y,z){
+    const t = this.map.get(VoxelWorld.key(x,y,z));
+    if (t === undefined) return false;
+    if (t === 'door_open') return false;
+    return true;
+  }
   set(x,y,z,t){
     const k = VoxelWorld.key(x,y,z);
     const old = this.map.get(k);
@@ -1317,9 +1373,9 @@ let pointerLocked = false;
 let chatOpen = false;
 let state = 'menu';
 
-const WALK_SPEED = 4.317;
-const SPRINT_SPEED = 5.612;
-const SPRINT_JUMP_BONUS = 7.127;
+const WALK_SPEED = 13.5;
+const SPRINT_SPEED = 16.5;
+const SPRINT_JUMP_BONUS = 13.5;
 const GRAVITY = 32;
 const JUMP_HEIGHT = 1.252;
 const JUMP_VELOCITY = Math.sqrt(2 * GRAVITY * JUMP_HEIGHT);
@@ -1374,12 +1430,11 @@ let myName = localStorage.getItem('hypepvp_name') || ('Player' + Math.floor(Math
 function initUsername(){
   const inp = $('usernameInput');
   inp.value = myName;
-  const handler = (e) => {
+  inp.addEventListener('input', (e) => {
     const v = e.target.value.slice(0, 16);
-    myName = v.trim() || 'Player' + Math.floor(Math.random() * 900 + 100);
+    myName = v.trim() || myName;
     try { localStorage.setItem('hypepvp_name', myName); } catch(err){}
-  };
-  inp.addEventListener('input', handler);
+  });
   inp.addEventListener('blur', (e) => {
     if (!e.target.value.trim()){ e.target.value = myName; }
   });
@@ -1388,7 +1443,7 @@ function initUsername(){
 function joinServer(serverId, modeId){
   Sound.init(); Sound.resume();
   NET.serverId = serverId; NET.modeId = modeId;
-  NET.roomId = ('hypepvp-v7-' + serverId + '-' + modeId).toLowerCase();
+  NET.roomId = ('hypepvp-v8-' + serverId + '-' + modeId).toLowerCase();
   NET.players.clear(); NET.conns.clear(); NET.hostConn = null; NET.connected = false;
   showPane('pane-lobby');
   $('lobby-title').textContent = SERVERS[serverId].name + ' / ' + SERVERS[serverId].modes[modeId].name;
@@ -1654,9 +1709,7 @@ function handleMessage(d, fromConn){
       break;
     }
     case 'vote': {
-      if (NET.isHost){
-        GAME.votes[d.voter] = d.target;
-      }
+      if (NET.isHost) GAME.votes[d.voter] = d.target;
       break;
     }
   }
@@ -1786,12 +1839,11 @@ function destroyAvatars(){
   for (const [id, el] of nametagMap){ el.remove(); nametagMap.delete(id); }
 }
 
-/* ========== THEMES for Build Battle ========== */
+/* ========== THEMES ========== */
 const THEMES = [
-  'A House', 'A Castle', 'A Tower', 'A Tree', 'A Robot',
-  'A Statue', 'A Boat', 'A Bridge', 'A Farm', 'A Pyramid',
-  'A Spaceship', 'A Dragon', 'A Fountain', 'A Campfire', 'A Snowman',
-  'A Flower', 'A Car', 'A Lighthouse', 'A Sword', 'A Crown',
+  'A House','A Castle','A Tower','A Tree','A Robot','A Statue','A Boat','A Bridge',
+  'A Farm','A Pyramid','A Spaceship','A Dragon','A Fountain','A Campfire','A Snowman',
+  'A Flower','A Car','A Lighthouse','A Sword','A Crown',
 ];
 
 /* ========== WORLD GEN ========== */
@@ -1863,7 +1915,6 @@ function buildWorldForMode(mode, seed, roster){
             world.set(cx + dx, 8, cz + dz, 'stone');
           }
         }
-      // Barrier walls
       for (let dx = -PLOT_R; dx <= PLOT_R; dx++){
         world.set(cx + dx, 11, cz - PLOT_R, 'barrier');
         world.set(cx + dx, 12, cz - PLOT_R, 'barrier');
@@ -2009,6 +2060,7 @@ function hostStartGame(){
   GAME.kills = {};
   GAME.votes = {};
   GAME.subPhase = 'building';
+  buildBattleTimer = 300;
   for (const p of NET.players.values()) GAME.kills[p.id] = 0;
 
   let theme = null;
@@ -2016,9 +2068,7 @@ function hostStartGame(){
     theme = THEMES[Math.floor(Math.random() * THEMES.length)];
     GAME.theme = theme;
     GAME.voteTime = 0;
-  } else {
-    GAME.theme = '';
-  }
+  } else GAME.theme = '';
 
   applyStart(seed, mode, roster, null, null, theme);
   const protectedKeys = [...GAME.protected];
@@ -2042,6 +2092,7 @@ function applyStart(seed, mode, roster, snapshot, protectedKeys, theme){
   GAME.votes = {};
   GAME.subPhase = 'building';
   GAME.voteTime = 0;
+  buildBattleTimer = 300;
   if (theme){ GAME.theme = theme; }
   else if (mode === 'buildbattle' && !GAME.theme){ GAME.theme = THEMES[0]; }
   else if (mode !== 'buildbattle'){ GAME.theme = ''; }
@@ -2062,8 +2113,8 @@ function applyStart(seed, mode, roster, snapshot, protectedKeys, theme){
 
   initHotbar();
   if (mode === 'build' || mode === 'buildbattle'){
-    const buildIds = ['wool','stone','planks','glass','leaves','obsidian'];
-    for (let i = 0; i < 6; i++) giveItem(buildIds[i], 64);
+    const buildIds = ['wool','planks','stone','door','glass','leaves','yellow','blue','green'];
+    for (let i = 0; i < 9; i++) giveItem(buildIds[i], 64);
   } else if (mode === 'tntrun'){
     giveItem('wool', 64);
   }
@@ -2101,6 +2152,8 @@ function applyStart(seed, mode, roster, snapshot, protectedKeys, theme){
   $('killfeed').innerHTML = '';
   closeVoteUI();
   $('scoreboard').classList.toggle('hidden', mode === 'build');
+  $('mFly').classList.toggle('hidden', !(isMobile && (mode === 'build' || mode === 'buildbattle')));
+  $('mFly').classList.remove('fly-on');
   showCenter('', '');
   updateHUD();
   if (mode === 'buildbattle' && GAME.theme){
@@ -2156,6 +2209,8 @@ function hostEndGame(winnerName){
 }
 
 let hostAccum = 0;
+let buildBattleTimer = 300;
+
 function hostTickLoop(){
   let last = performance.now();
   function loop(){
@@ -2179,7 +2234,6 @@ function hostTickLoop(){
   loop();
 }
 
-let buildBattleTimer = 300;
 function hostGameTick(dt){
   if (GAME.mode === 'tntrun'){
     GAME.timer -= dt;
@@ -2206,8 +2260,6 @@ function hostGameTick(dt){
       broadcast({ t:'state', phase:'playing', timer: 0, subPhase: 'voting', voteTime: GAME.voteTime });
       if (GAME.voteTime <= 0) finishVoting();
       return;
-    } else if (GAME.subPhase === 'results'){
-      // Countdown to end handled by hostEndGame timeout
     }
   }
   const removals = [];
@@ -2253,7 +2305,6 @@ function hostGameTick(dt){
     GAME.timer = (GAME.timer || 0) + dt;
   }
 
-  // Void death — but not in build/buildbattle modes
   if (GAME.mode !== 'build' && GAME.mode !== 'buildbattle'){
     const voidY = (GAME.mode === 'tntrun') ? 10 : 0;
     for (const p of NET.players.values()){
@@ -2261,13 +2312,10 @@ function hostGameTick(dt){
       if (p.y < voidY){ p.hp = 0; hostKillPlayer(p, null); }
     }
   } else {
-    // In build modes, respawn players who somehow fall below the world
     for (const p of NET.players.values()){
       if (p.y < -30){
-        // Find their plot or default spawn
         let sx = 0.5, sy = 5, sz = 0.5;
         if (GAME.mode === 'buildbattle' && GAME.plotCenters.length){
-          const idx = Object.keys(Object.fromEntries([...NET.players.keys()].map((k,i)=>[k,i])))[NET.players.has(p.id) ? [...NET.players.keys()].indexOf(p.id) : 0];
           const myIdx = [...NET.players.keys()].indexOf(p.id);
           const plot = GAME.plotCenters[myIdx % GAME.plotCenters.length];
           sx = plot.x + 0.5; sy = 11.5; sz = plot.z + 0.5;
@@ -2360,15 +2408,10 @@ function openVoteUI(){
     grid.appendChild(btn);
   }
 }
-function closeVoteUI(){
-  $('voteOverlay').classList.add('hidden');
-}
+function closeVoteUI(){ $('voteOverlay').classList.add('hidden'); }
 function sendVote(targetId){
-  if (NET.isHost){
-    GAME.votes[NET.myId] = targetId;
-  } else {
-    sendToHost({ t:'vote', voter: NET.myId, target: targetId });
-  }
+  if (NET.isHost) GAME.votes[NET.myId] = targetId;
+  else sendToHost({ t:'vote', voter: NET.myId, target: targetId });
 }
 
 /* ========== PHYSICS ========== */
@@ -2423,11 +2466,16 @@ function updatePhysics(dt){
   }
   if (mv.lengthSq() > 0) mv.normalize();
   if (player.spectator){
-    const spd = 12;
+    const spd = 14;
     player.pos.x += mv.x * spd * dt;
     player.pos.z += mv.z * spd * dt;
-    if (keys['Space'] || mobileInput.jump) player.pos.y += spd * dt;
-    if (keys['ShiftLeft'] || keys['ShiftRight']) player.pos.y -= spd * dt;
+    if (isMobile){
+      if (mobileInput.jump) player.pos.y += spd * dt;
+      if (mobileInput.sprint) player.pos.y -= spd * dt;
+    } else {
+      if (keys['Space']) player.pos.y += spd * dt;
+      if (keys['ShiftLeft'] || keys['ShiftRight']) player.pos.y -= spd * dt;
+    }
     me.x = player.pos.x; me.y = player.pos.y; me.z = player.pos.z; me.ry = yaw;
     return;
   }
@@ -2500,7 +2548,8 @@ function raycast(origin, dir, maxDist){
   let tmz = ((dir.z > 0 ? z+1 : z) - origin.z) / (dir.z || 1e-9);
   let nx=0, ny=0, nz=0, t=0;
   for (let i = 0; i < 250 && t <= maxDist; i++){
-    if (GAME.world.isSolid(x, y, z)) return { x, y, z, nx, ny, nz, dist:t, type:GAME.world.get(x,y,z) };
+    const blk = GAME.world.get(x, y, z);
+    if (blk !== undefined) return { x, y, z, nx, ny, nz, dist:t, type:blk };
     if (tmx < tmy && tmx < tmz){ x += stepX; t = tmx; tmx += tdx; nx = -stepX; ny=0; nz=0; }
     else if (tmy < tmz){ y += stepY; t = tmy; tmy += tdy; nx=0; ny = -stepY; nz=0; }
     else { z += stepZ; t = tmz; tmz += tdz; nx=0; ny=0; nz = -stepZ; }
@@ -2509,7 +2558,7 @@ function raycast(origin, dir, maxDist){
 }
 let highlightBox = null;
 function updateHighlight(){
-  if (!GAME.world || GAME.phase !== 'playing' || player.spectator){
+  if (!GAME.world || GAME.phase !== 'playing' || (player.spectator && GAME.mode !== 'build' && GAME.mode !== 'buildbattle')){
     if (highlightBox) highlightBox.visible = false; return;
   }
   const dir = new THREE.Vector3();
@@ -2614,6 +2663,20 @@ function doPlace(){
   if (GAME.mode === 'skywars'){
     const c = chestNear(camera.position, dir);
     if (c){ openChest(c); return; }
+  }
+
+  // Door interaction first (unless holding a door item)
+  const heldSlot = currentSlot();
+  const heldItem = heldSlot ? ITEMS[heldSlot.id] : null;
+  const isHoldingDoor = heldItem && heldItem.block === 'door';
+  if (!isHoldingDoor){
+    const doorHit = raycast(camera.position, dir, 5);
+    if (doorHit && (doorHit.type === 'door' || doorHit.type === 'door_open')){
+      const newType = doorHit.type === 'door' ? 'door_open' : 'door';
+      Sound.door();
+      setBlockNet(doorHit.x, doorHit.y, doorHit.z, newType);
+      return;
+    }
   }
 
   const slot = currentSlot();
@@ -2763,12 +2826,11 @@ function initMobileInput(){
   joyEl.addEventListener('touchend', onJoyEnd, { passive:false });
   joyEl.addEventListener('touchcancel', onJoyEnd, { passive:false });
 
-  // Touch-look + tap-to-place + hold-to-break
   let lookTouchId = null;
   let lookState = null;
-  const MOVE_THRESHOLD = 10;   // px
-  const HOLD_TIME = 240;       // ms before breaking starts
-  const BREAK_RATE = 220;      // ms between breaks while holding
+  const MOVE_THRESHOLD = 10;
+  const HOLD_TIME = 240;
+  const BREAK_RATE = 220;
 
   function startHoldBreak(){
     if (!lookState) return;
@@ -2783,7 +2845,7 @@ function initMobileInput(){
 
   canvas.addEventListener('touchstart', (e) => {
     if (state !== 'playing' || chatOpen) return;
-    if ($('voteOverlay').classList.contains('hidden') === false) return;
+    if (!$('voteOverlay').classList.contains('hidden')) return;
     for (const t of e.changedTouches){
       if (lookTouchId === null){
         lookTouchId = t.identifier;
@@ -2848,7 +2910,6 @@ function initMobileInput(){
     }
   });
 
-  // Buttons
   const jmpBtn = $('mJump');
   jmpBtn.addEventListener('touchstart', (e) => {
     e.preventDefault(); e.stopPropagation();
@@ -2883,6 +2944,16 @@ function initMobileInput(){
   $('mobileChatInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter'){ e.preventDefault(); sendMobileChat(); }
   });
+
+  const flyBtn = $('mFly');
+  flyBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    if (GAME.mode !== 'build' && GAME.mode !== 'buildbattle') return;
+    player.spectator = !player.spectator;
+    player.vel.set(0,0,0);
+    flyBtn.classList.toggle('fly-on', player.spectator);
+    addChat('[SYS] Flight: ' + (player.spectator ? 'ON' : 'OFF'), 'sys');
+  }, { passive:false });
 }
 
 function openMobileChat(){
@@ -2936,8 +3007,13 @@ function addChat(text, cls){
   const d = document.createElement('div');
   d.className = 'chatline ' + (cls || '');
   d.textContent = text;
+  d.style.transition = 'opacity .35s';
   log.appendChild(d);
   while (log.children.length > 9) log.removeChild(log.firstChild);
+  setTimeout(() => {
+    d.style.opacity = '0';
+    setTimeout(() => { if (d.parentNode) d.parentNode.removeChild(d); }, 360);
+  }, 3000);
 }
 function sendLobbyChat(){
   const v = $('lobby-msg').value.trim();
@@ -3062,18 +3138,13 @@ function updateHUD(){
       if (GAME.subPhase === 'building') $('gameTimer').textContent = 'Theme: ' + GAME.theme + ' | ' + fmtTime(buildBattleTimer);
       else if (GAME.subPhase === 'voting') $('gameTimer').textContent = 'Voting: ' + Math.ceil(GAME.voteTime) + 's';
       else $('gameTimer').textContent = '';
-    } else {
-      $('gameTimer').textContent = '';
-    }
+    } else $('gameTimer').textContent = '';
   } else if (GAME.phase === 'countdown'){
     $('gameTimer').textContent = 'Starting in ' + Math.ceil(GAME.countdown);
-  } else {
-    $('gameTimer').textContent = '';
-  }
+  } else $('gameTimer').textContent = '';
   $('deadOverlay').classList.toggle('hidden', me.alive !== false || GAME.mode === 'build' || GAME.mode === 'buildbattle');
   $('deadMsg').classList.toggle('hidden', me.alive !== false || GAME.mode === 'build' || GAME.mode === 'buildbattle');
   updateScoreboard();
-  // Vote timer in overlay
   if (GAME.subPhase === 'voting' && !$('voteOverlay').classList.contains('hidden')){
     $('vote-timer').textContent = Math.ceil(GAME.voteTime) + 's';
   }
@@ -3213,6 +3284,15 @@ function boot(){
   document.addEventListener('keypress', (e) => {
     if (state === 'playing' && !chatOpen && !isMobile && (e.key === 't' || e.key === 'T')) openChat();
   });
+
+  const doLeave = () => {
+    if (state !== 'playing') return;
+    if (confirm('Leave the game?')) leaveRoom();
+  };
+  $('leaveBtn').addEventListener('click', doLeave);
+  $('leaveBtn').addEventListener('touchstart', (e) => {
+    e.preventDefault(); doLeave();
+  }, { passive:false });
 
   showPane('pane-main');
   animate();
